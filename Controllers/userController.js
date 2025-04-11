@@ -78,3 +78,18 @@ export const login = async (req,res)=>{
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
+
+export const getallUser = async (req,res)=>{
+    try{
+        const users = User.find({});
+
+        if(!users){
+            res.status(400).json({message:"Users are available"});
+        }
+
+        res.status(200).json({users})
+
+    }catch(error){
+        res.status(500).json({message:"Internal Server Error"});
+    }
+}
