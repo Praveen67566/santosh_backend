@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 import argon2 from "argon2";
 const userSchema = new mongoose.Schema({
-    name:{
+    fname:{
+        type:String,
+        required:true
+    },
+    lname:{
         type:String,
         required:true
     },
