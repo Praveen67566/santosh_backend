@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    countryCode:{
+        type:String,
+        required:true,
+    },
+    fullPhone:{
+        type:String,
+        required:true,
+    },
     password:{
         type:String,
         required:true,
