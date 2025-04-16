@@ -81,7 +81,7 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       {
         expiresIn: "1h",
@@ -98,7 +98,13 @@ export const login = async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token: token,
-      user: { id: user._id, email: user.email },
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        fname: user.fname,
+        lname: user.lname,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
@@ -156,9 +162,7 @@ export const resetPassword = async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user)
       return res.status(400).json({ message: "Invalid or expired token" });
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
+    user.password = newPassword;
     await user.save();
 
     res.status(200).json({ message: "Password reset successfully" });
@@ -167,29 +171,33 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-export const adminlogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+// export const adminlogin = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
 
-    if (!email || !password) {
-      res.status(400).json({ message: "Credentails are required" });
-    }
+//     if (!email || !password) {
+//       res.status(400).json({ message: "Credentails are required" });
+//     }
 
-    const user = User.findOne({ email });
+//     const user = User.findOne({ email });
 
-    if (!user) {
-      res.status(400).json({ message: "user not found" });
-    }
+//     if (!user) {
+//       res.status(400).json({ message: "user not found" });
+//     }
 
-    if (user.role == "user") {
-      res.status(400).json({ message: "Restricted to user" });
-    }
+//     if (user.role == "user") {
+//       res.status(400).json({ message: "Restricted to user" });
+//     }
 
-    res.status(200).json({ message: "Admin login Successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+//     res.status(200).json({
+//       message: "Admin Login successful",
+//       user: { id: user._id, email: user.email },
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
 
 export const getCurrentUser = async (req, res) => {
   try {
