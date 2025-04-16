@@ -5,6 +5,7 @@ import { connectDB } from "./Config/connectDB.js";
 import cookieParser from "cookie-parser";
 import { userRouter } from "./Routers/userRouter.js";
 import { billingrouter } from "./Routers/billingRouter.js";
+import { contactRouter } from "./Routers/contactRouter.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 //Routers
 app.use("/api", userRouter);
 app.use("/api",billingrouter);
+app.use("/api",contactRouter);
 
 
 const PORT = process.env.PORT;
