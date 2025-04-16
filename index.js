@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./Config/connectDB.js";
 import cookieParser from "cookie-parser";
 import { userRouter } from "./Routers/userRouter.js";
+import { billingrouter } from "./Routers/billingRouter.js";
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 
 //Routers
 app.use("/api", userRouter);
+app.use("/api",billingrouter);
+
 
 const PORT = process.env.PORT;
 
@@ -34,3 +37,6 @@ connectDB()
   .catch((error) => {
     console.log(error);
   });
+
+
+
