@@ -23,9 +23,8 @@ app.use(express.urlencoded({ extended: true }));
 
 //Routers
 app.use("/api", userRouter);
-app.use("/api",billingrouter);
-app.use("/api",contactRouter);
-
+app.use("/api", billingrouter);
+app.use("/api", contactRouter);
 
 const PORT = process.env.PORT;
 
@@ -39,6 +38,3 @@ connectDB()
   .catch((error) => {
     console.log(error);
   });
-
-
-

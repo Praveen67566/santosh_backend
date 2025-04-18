@@ -16,4 +16,4 @@ userRouter.post("/login", login);
 userRouter.get("/user", getCurrentUser);
 userRouter.post("/forgot-password", forgetPassword);
 userRouter.post("/reset-password", resetPassword);
-userRouter.get("/users",protect,getallUser);
+userRouter.get("/users", protect, getallUser);

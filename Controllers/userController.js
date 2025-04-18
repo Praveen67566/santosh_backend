@@ -113,12 +113,11 @@ export const login = async (req, res) => {
 
 export const getallUser = async (req, res) => {
   try {
-    const users = User.find({});
-
-    if (!users) {
-      res.status(400).json({ message: "Users are available" });
+    const users = await User.find().select("-password");
+    console.log(users);
+    if (!users.length) {
+      return res.status(404).json({ message: "No users found" });
     }
-
     res.status(200).json({ users });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
