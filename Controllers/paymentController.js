@@ -48,3 +48,4 @@ export const makepaymentsformembership = async (req,res)=>{
         res.status(500).json({message:"Some Internal Server Error"});
     }
 }
+
