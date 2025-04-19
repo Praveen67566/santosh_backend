@@ -190,34 +190,6 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// export const adminlogin = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//       res.status(400).json({ message: "Credentails are required" });
-//     }
-
-//     const user = User.findOne({ email });
-
-//     if (!user) {
-//       res.status(400).json({ message: "user not found" });
-//     }
-
-//     if (user.role == "user") {
-//       res.status(400).json({ message: "Restricted to user" });
-//     }
-
-//     res.status(200).json({
-//       message: "Admin Login successful",
-//       user: { id: user._id, email: user.email },
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };
-
 export const getCurrentUser = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -231,8 +203,17 @@ export const getCurrentUser = async (req, res) => {
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) return res.status(404).json({ message: "User not found" });
+    
+
+    const membership = await Membership.findOne({ userid: user._id });
+
+    if(membership){
+      res.status(200).json({user,membership});
+    }
+
 
     res.status(200).json(user);
+    
   } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
   }
