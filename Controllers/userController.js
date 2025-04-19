@@ -208,7 +208,7 @@ export const getCurrentUser = async (req, res) => {
     const membership = await Membership.findOne({ userid: user._id });
 
     if(membership){
-      res.status(200).json({user,membership});
+      return res.status(200).json({user,membership});
     }
 
 
