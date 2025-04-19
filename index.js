@@ -7,6 +7,7 @@ import { userRouter } from "./Routers/userRouter.js";
 import { billingrouter } from "./Routers/billingRouter.js";
 import { contactRouter } from "./Routers/contactRouter.js";
 import { membershipRouter } from "./Routers/membershipRouter.js";
+import { paymentRouter } from "./Routers/paymentRouter.js";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use("/api", userRouter);
 app.use("/api", billingrouter);
 app.use("/api", contactRouter);
 app.use('/api',membershipRouter);
+app.use('/api',paymentRouter);
 
 const PORT = process.env.PORT;
 
