@@ -2,6 +2,7 @@ import { User } from "../Models/userModel.js";
 import jwt from "jsonwebtoken";
 import { sendMail } from "../Config/sendmail.js";
 import { emailSchema, resetPasswordSchema } from "../validation/validation.js";
+import { Membership } from "../Models/membershipModel.js";
 
 export const register = async (req, res) => {
   try {
@@ -69,11 +70,13 @@ export const login = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
+    
 
     if (!user) {
       res.status(400).json({ message: "Provide Correct Email" });
     }
-
+    
+  
     const isModified = user.verifyPassword(password);
 
     if (!isModified) {
@@ -94,6 +97,22 @@ export const login = async (req, res) => {
       sameSite: "Strict",
       maxAge: 60 * 60 * 1000, // 1 hour
     });
+    
+    const membership = await Membership.findById({userid:user._id});
+
+    if(membership){
+      return res.status(200).json({
+        message: "Login successful",
+        token: token,
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+          fname: user.fname,
+          lname: user.lname,
+        },membership
+      });
+    }
 
     res.status(200).json({
       message: "Login successful",
