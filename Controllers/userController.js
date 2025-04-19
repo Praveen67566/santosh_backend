@@ -98,7 +98,7 @@ export const login = async (req, res) => {
       maxAge: 60 * 60 * 1000, // 1 hour
     });
     
-    const membership = await Membership.findById({userid:user._id});
+    const membership = await Membership.findOne({ userid: user._id });
 
     if(membership){
       return res.status(200).json({
@@ -110,7 +110,7 @@ export const login = async (req, res) => {
           role: user.role,
           fname: user.fname,
           lname: user.lname,
-        },membership
+        },membership:membership
       });
     }
 
@@ -126,6 +126,7 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
