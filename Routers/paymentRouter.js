@@ -1,6 +1,6 @@
 import express from "express"
 import { upload } from "../Common/multerConf.js";
-import { makepayments, makepaymentsformembership } from "../Controllers/paymentController.js";
+import { makepaymentsformembership } from "../Controllers/paymentController.js";
 
 export const paymentRouter = express.Router();
 
