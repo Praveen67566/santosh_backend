@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { userRouter } from "./Routers/userRouter.js";
 import { billingrouter } from "./Routers/billingRouter.js";
 import { contactRouter } from "./Routers/contactRouter.js";
+import { membershipRouter } from "./Routers/membershipRouter.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", userRouter);
 app.use("/api", billingrouter);
 app.use("/api", contactRouter);
+app.use('/api',membershipRouter);
 
 const PORT = process.env.PORT;
 
