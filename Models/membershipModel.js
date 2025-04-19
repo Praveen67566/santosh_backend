@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const membershipSchema = new mongoose.Schema({
-
     userid:{
        type:mongoose.Schema.Types.ObjectId,
        ref:"User"
@@ -10,9 +9,10 @@ const membershipSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Payment"
     },
-    refid:{
+    status:{
         type:String,
-        required:true,
+        enum:['Active','InActive'],
+        default:'InActive'
     }
 },{timestamps:true}) 
 

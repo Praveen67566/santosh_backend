@@ -12,7 +12,7 @@ const billingSchema = new mongoose.Schema({
     tobepaidsec:tobepaidsecSchema,
     settlementsec:settlementSchema
 },{timestamps:true});
-
+    
 export const Billing = mongoose.model("Billing",billingSchema);
 
 

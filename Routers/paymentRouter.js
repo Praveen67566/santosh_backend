@@ -1,7 +1,7 @@
 import express from "express"
 import { upload } from "../Common/multerConf.js";
-import { makepayments } from "../Controllers/paymentController";
+import { makepayments, makepaymentsformembership } from "../Controllers/paymentController.js";
 
 export const paymentRouter = express.Router();
 
-paymentRouter.post('/payment',upload.single("file"),makepayments);
+paymentRouter.post('/payment',upload.single("file"),makepaymentsformembership);
