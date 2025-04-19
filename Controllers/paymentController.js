@@ -14,3 +14,12 @@ export const getAllPayments = async (req,res) =>{
        res.status(500).json({message:"Internal Sever Error"}) 
     }
 }
+
+export const makepayments = async (req,res)=>{
+    try {
+        const {utrNumber} = req.body;
+    console.log(utrNumber)
+    } catch (error) {
+        
+    }
+}
