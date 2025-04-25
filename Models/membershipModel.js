@@ -14,6 +14,6 @@ const membershipSchema = new mongoose.Schema({
         enum:['Active','InActive'],
         default:'InActive'
     }
-},{timestamps:true}) 
+},{timestamps:true})
 
 export const Membership = mongoose.model("Membership",membershipSchema);

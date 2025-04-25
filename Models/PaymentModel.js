@@ -2,6 +2,10 @@
 import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema({
+   userid:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User"
+   },
    utrNumber:{
     type:String,
     required:true,

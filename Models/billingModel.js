@@ -1,18 +1,37 @@
 import mongoose from "mongoose";
-import { profitsecSchema } from "./billingModels/profitsec.js";
-import { tobepaidsecSchema } from "./billingModels/tobepaid.js";
-import { settlementSchema } from "./billingModels/settlementsec.js";
 
 const billingSchema = new mongoose.Schema({
-    userid:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
-    },
-    profitsec:profitsecSchema,
-    tobepaidsec:tobepaidsecSchema,
-    settlementsec:settlementSchema
+     bill_image:{
+        type:String,
+     },
+     email:{
+        type:String,
+        unique:true
+     },
+     username:{
+        type:String,
+     },
+     cent_Account:{
+        type:Number,
+     },
+     billing_startdate:{
+        type:Date,
+     },
+     billing_enddate:{
+        type:Date,
+     },
+     total_profit:{
+        type:Number
+     },
+     profit_sharing:{
+        type:Number
+     },
+     ispaymentreceived:{
+        type:Boolean
+     },
+     received_date:{
+        type:Date
+     }
 },{timestamps:true});
-    
+
 export const Billing = mongoose.model("Billing",billingSchema);
-
-

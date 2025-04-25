@@ -1,68 +1,57 @@
 import { Billing } from "../Models/billingModel.js";
 
-// Create a new billing record
 export const createBilling = async (req, res) => {
   try {
-    const newBilling = new Billing({
-      ...req.body,
-      userid: req.user._id, // Link billing to the logged-in user
-    });
-    const savedBilling = await newBilling.save();
-    res.status(201).json(savedBilling);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+      const {userid,username, cent_Account, billing_startdate, billing_enddate, total_profit, profit_sharing, ispaymentreceived, received_date} = req.body;
+
+      const bill_image = req.file.filename;
+
+      if (!userid ||!username || !cent_Account || !billing_startdate || !billing_enddate || !total_profit || !profit_sharing || !ispaymentreceived || !received_date) {
+        res.status(404).json({ message: "fields are required" })
+      }
+
+      const bill = await Billing.create({
+        userid,
+        username,
+        cent_Account,
+        billing_startdate,
+        billing_enddate,
+        total_profit,
+        profit_sharing,
+        ispaymentreceived,
+        received_date,
+        bill_image
+      })
+
+      if (!bill) {
+        res.status(500).json({ message: "Internal Server Error" });
+      }
+
+      res.status(201).json({ bill });
+
+    }
+ catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// Get all billing records for the logged-in user
-export const getAllBillings = async (req, res) => {
+export const getCurrentUserBilling = async (req, res) => {
   try {
-    const billings = await Billing.find({ userid: req.user._id });
-    res.status(200).json(billings);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+    const userId = req.params.userid || req.user?.id; // use req.user if auth middleware exists
 
-// Get a billing record by ID (only if it belongs to the user)
-export const getBillingById = async (req, res) => {
-  try {
-    const billing = await Billing.findOne({
-      _id: req.params.id,
-      userid: req.user._id,
-    });
-    if (!billing) return res.status(404).json({ error: "Billing not found" });
-    res.status(200).json(billing);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
 
-// Update a billing record (only if it belongs to the user)
-export const updateBilling = async (req, res) => {
-  try {
-    const updatedBilling = await Billing.findOneAndUpdate(
-      { _id: req.params.id, userid: req.user._id },
-      req.body,
-      { new: true, runValidators: true }
-    );
-    if (!updatedBilling) return res.status(404).json({ error: "Billing not found or unauthorized" });
-    res.status(200).json(updatedBilling);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
+    const billings = await Billing.find({ userid: userId }).sort({ createdAt: -1 });
 
-// Delete a billing record (only if it belongs to the user)
-export const deleteBilling = async (req, res) => {
-  try {
-    const deletedBilling = await Billing.findOneAndDelete({
-      _id: req.params.id,
-      userid: req.user._id,
-    });
-    if (!deletedBilling) return res.status(404).json({ error: "Billing not found or unauthorized" });
-    res.status(200).json({ message: "Billing deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    if (!billings || billings.length === 0) {
+      return res.status(404).json({ message: "No billing records found for this user" });
+    }
+
+    res.status(200).json({ billings });
+  } catch (error) {
+    console.error("Get Billing Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { sendMail } from "../Config/sendmail.js";
 import { emailSchema, resetPasswordSchema } from "../validation/validation.js";
 import { Membership } from "../Models/membershipModel.js";
+import crypto from "crypto";
 
 export const register = async (req, res) => {
   try {
@@ -18,27 +19,31 @@ export const register = async (req, res) => {
       gender,
     } = req.body;
 
+    const referredCode = req.ref; // Get the referral code from the request
+
     if (
-      !fname ||
-      !lname ||
-      !email ||
-      !phone ||
-      !fullPhone ||
-      !countryCode ||
-      !city ||
-      !password ||
-      !gender
+      !fname || !lname || !email || !phone || !fullPhone ||
+      !countryCode || !city || !password || !gender
     ) {
-      res.status(400).json({ message: "Credentails are required" });
+      return res.status(400).json({ message: "Credentials are required" });
     }
 
-    const existinguser = await User.findOne({ email });
-
-    if (existinguser) {
-      res.status(400).json({ message: "user already exist" });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    const user = await User.create({
+    // ✅ Generate a unique referral code
+    let referralCode;
+    let codeExists = true;
+    while (codeExists) {
+      referralCode = crypto.randomBytes(3).toString("hex");
+      const existingCode = await User.findOne({ referralCode });
+      if (!existingCode) codeExists = false;
+    }
+
+    // Create new user instance
+    const newUser = new User({
       fname,
       lname,
       email,
@@ -48,45 +53,60 @@ export const register = async (req, res) => {
       password,
       fullPhone,
       countryCode,
+      referredCode,
+      referralCode,
     });
 
-    if (!user) {
-      res.status(400).json({ message: "User Creation Failed" });
+    // ✅ Apply benefit to referrer only once if referredCode is provided
+    if (referredCode) {
+      const referrer = await User.findOne({ referralCode: referredCode });
+
+      if (referrer) {
+        // Check if this new user is already in referrer's referral list
+        const alreadyReferred = referrer.referrals.includes(newUser._id);
+        if (!alreadyReferred) {
+          referrer.wallet = (referrer.wallet || 0) + 350;
+          referrer.referrals.push(newUser._id); // ✅ Track one-time referral
+          await referrer.save();
+        }
+      }
     }
 
-    res.status(201).json({ message: "User Registered Successfully" });
+    await newUser.save();
+
+    return res.status(201).json({ message: "User Registered Successfully" });
+
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error("Register Error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      res.status(400).json({ message: "Credentails are required" });
+      return res.status(400).json({ message: "Credentials are required" });
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      res.status(400).json({ message: "Provide Correct Email" });
+      return res.status(400).json({ message: "Email is incorrect" });
     }
 
-    const isModified = user.verifyPassword(password);
+    const isCorrect = await user.verifyPassword(password);
 
-    if (!isModified) {
-      res.status(400).json({ message: "Password Not Correct" });
+    if (!isCorrect) {
+      return res.status(400).json({ message: "Password is incorrect" });
     }
 
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
+      { expiresIn: "1h" }
     );
 
     res.cookie("token", token, {
@@ -98,34 +118,34 @@ export const login = async (req, res) => {
 
     const membership = await Membership.findOne({ userid: user._id });
 
+    const userResponse = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      fname: user.fname,
+      lname: user.lname,
+      referralCode: user.referralCode || null,
+      referredCode: user.referredCode || null,
+      wallet: user.wallet || 0,
+    };
+
     if (membership) {
       return res.status(200).json({
         message: "Login successful",
-        token: token,
-        user: {
-          id: user._id,
-          email: user.email,
-          role: user.role,
-          fname: user.fname,
-          lname: user.lname,
-        },
-        membership: membership,
+        token,
+        user: userResponse,
+        membership,
       });
     }
 
     res.status(200).json({
       message: "Login successful",
-      token: token,
-      user: {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-        fname: user.fname,
-        lname: user.lname,
-      },
+      token,
+      user: userResponse,
     });
+
   } catch (error) {
-    console.log(error);
+    console.error("Login Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -214,3 +234,31 @@ export const getCurrentUser = async (req, res) => {
     res.status(401).json({ message: "Unauthorized" });
   }
 };
+
+export const getReferralLink = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Construct the referral link
+    const referralLink = `${process.env.CLIENT_URL}/register?referralCode=${user.referralCode}`;
+
+    res.status(200).json({
+      message: "Referral link fetched successfully",
+      referralLink,
+    });
+  } catch (error) {
+    console.error("Error fetching referral link:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+

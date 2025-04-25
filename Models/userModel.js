@@ -45,6 +45,21 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    referredCode: {
+      type: String,
+      sparse: true  // or maybe missing altogether
+    },
+    referrals: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }],
+    referralCode:{
+      type: String,
+      sparse: true 
+    },
+    wallet:{
+      type:Number
+    }
   },
   { timestamps: true }
 );
