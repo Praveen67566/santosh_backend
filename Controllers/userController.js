@@ -19,7 +19,9 @@ export const register = async (req, res) => {
       gender,
     } = req.body;
 
-    const referredCode = req.ref; // Get the referral code from the request
+    const referredCode = req.query.referralCode; 
+    // Get the referral code from the request
+    console.log(referredCode);
 
     if (
       !fname || !lname || !email || !phone || !fullPhone ||
@@ -237,20 +239,20 @@ export const getCurrentUser = async (req, res) => {
 
 export const getReferralLink = async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies.token;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const token = authHeader.split(" ")[1];
+    
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
     // Construct the referral link
-    const referralLink = `${process.env.CLIENT_URL}/register?referralCode=${user.referralCode}`;
+    const referralLink = `${process.env.ClientUrl}/register?referralCode=${user.referralCode}`;
 
     res.status(200).json({
       message: "Referral link fetched successfully",

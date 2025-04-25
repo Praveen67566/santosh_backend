@@ -24,7 +24,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 //Routers
-app.use("/api", userRouter);
+app.use("/api/auth", userRouter);
 app.use("/api", billingrouter);
 app.use("/api/contactinfo", contactRouter);
 app.use('/api',membershipRouter);
