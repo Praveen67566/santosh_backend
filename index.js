@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 //Routers
 app.use("/api", userRouter);
 app.use("/api", billingrouter);
-app.use("/api", contactRouter);
+app.use("/api/contactinfo", contactRouter);
 app.use('/api',membershipRouter);
 app.use('/api',paymentRouter);
 

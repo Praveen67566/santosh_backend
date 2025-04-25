@@ -1,4 +1,4 @@
-import { Contact } from "../Models/contactModel.js";
+import { Contact } from "../Models/contactModel.js"
 
 export const addcontact = async (req,res)=>{
      try{
@@ -25,6 +25,7 @@ export const addcontact = async (req,res)=>{
 }
 
 export const getallcontact = async (req,res)=>{
+    console.log("contact route hit ");
     try{
         const contacts = await Contact.find({}).sort({ createdAt: -1 });
 
