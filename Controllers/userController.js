@@ -70,13 +70,11 @@ export const login = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    
 
     if (!user) {
       res.status(400).json({ message: "Provide Correct Email" });
     }
-    
-  
+
     const isModified = user.verifyPassword(password);
 
     if (!isModified) {
@@ -97,10 +95,10 @@ export const login = async (req, res) => {
       sameSite: "Strict",
       maxAge: 60 * 60 * 1000, // 1 hour
     });
-    
+
     const membership = await Membership.findOne({ userid: user._id });
 
-    if(membership){
+    if (membership) {
       return res.status(200).json({
         message: "Login successful",
         token: token,
@@ -110,7 +108,8 @@ export const login = async (req, res) => {
           role: user.role,
           fname: user.fname,
           lname: user.lname,
-        },membership:membership
+        },
+        membership: membership,
       });
     }
 
@@ -126,7 +125,7 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -203,17 +202,14 @@ export const getCurrentUser = async (req, res) => {
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) return res.status(404).json({ message: "User not found" });
-    
 
     const membership = await Membership.findOne({ userid: user._id });
 
-    if(membership){
-      return res.status(200).json({user,membership});
+    if (membership) {
+      return res.status(200).json({ user, membership });
     }
 
-
     res.status(200).json(user);
-    
   } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
   }
