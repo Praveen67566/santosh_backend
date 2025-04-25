@@ -1,8 +1,9 @@
 import { Contact } from "../Models/contactModel.js"
 
-export const addcontact = async (req,res)=>{
-     try{
-       const {name, email,message} = req.body;
+// Add Contact
+export const addcontact = async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
 
        if(!name ||!email ||!message){
         res.status(400).json({message:"fields are required"})
@@ -39,4 +40,6 @@ export const getallcontact = async (req,res)=>{
         res.status(500).json({message:"Internal Server Error"});
     }
 }
+
+// Get All Contacts
 
