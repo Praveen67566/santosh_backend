@@ -1,3 +1,4 @@
+
 import mongoose from "mongoose";
 
 const membershipSchema = new mongoose.Schema({
@@ -13,6 +14,10 @@ const membershipSchema = new mongoose.Schema({
         type:String,
         enum:['Active','InActive'],
         default:'InActive'
+    },
+    flag:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true})
 
