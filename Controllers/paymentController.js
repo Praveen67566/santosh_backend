@@ -126,19 +126,11 @@ export const approvePayment = async (req, res) => {
 
 export const rejectPayment = async (req, res) => {
   try {
-    const payment = await Payment.findById(req.params.id);
+    const payment = await Payment.deleteOne({_id:req.params.id});
 
     if (!payment) {
-      return res.status(404).json({ message: "Payment not found" });
+      return res.status(500).json({ message: "Payment not deleted" });
     }
-
-    if (payment.onclick) {
-      return res.status(400).json({ message: "Action already performed" });
-    }
-
-    payment.status = "Unpaid";
-    payment.onclick = true;
-    await payment.save();
 
     res.status(200).json({ message: "Payment rejected", payment });
   } catch (error) {
