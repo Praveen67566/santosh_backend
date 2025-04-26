@@ -60,6 +60,21 @@ export const register = async (req, res) => {
     const referredCode = req.query.referralCode || null;
     let referrer = null;
 
+    // Create new user instance
+    const newUser = new User({
+      fname,
+      lname,
+      email,
+      gender,
+      phone,
+      city,
+      password,
+      fullPhone,
+      countryCode,
+      referredCode,
+      referralCode,
+    });
+    
     if (referredCode) {
       // Check if the referral code exists
       referrer = await User.findOne({ referralCode: referredCode });
@@ -76,29 +91,17 @@ export const register = async (req, res) => {
       }
 
       // Add the new user to referrer's referrals if not already added
-      const alreadyReferred = referrer.referrals.includes(req.body.email);
+      const alreadyReferred = referrer.referrals.includes(newUser._id);
       if (!alreadyReferred) {
         referrer.wallet = (referrer.wallet || 0) + 350;
-        referrer.referrals.push(req.body.email); // Track one-time referral
+        const refperson = {
+          id:newUser._id,
+          email:newUser.email
+        }
+        referrer.referrals.push(refperson); // Track one-time referral
         await referrer.save();
       }
     }
-
-    // Create new user instance
-    const newUser = new User({
-      fname,
-      lname,
-      email,
-      gender,
-      phone,
-      city,
-      password,
-      fullPhone,
-      countryCode,
-      referredCode,
-      referralCode,
-    });
-
     // Save the new user to the database
     await newUser.save();
 
