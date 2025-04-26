@@ -23,9 +23,11 @@ export const makepaymentsformembership = async (req, res) => {
       return res.status(400).json({ message: "utrNumber and userid required" });
     }
 
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
     const pay = await Payment.create({
       utrNumber,
-      paymentScreenShot: req.file.filename,
+      paymentScreenShot: fileUrl,
     });
 
     if (!pay) {
@@ -57,10 +59,12 @@ export const makepayment = async (req, res) => {
       return res.status(400).json({ message: "utrNumber and userid required" });
     }
 
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+
     const pay = await Payment.create({
       userid: userid,
       utrNumber,
-      paymentScreenShot: req.file.filename,
+      paymentScreenShot: fileUrl,
     });
 
     if (!pay) {
