@@ -98,31 +98,45 @@ export const makepayment = async (req, res) => {
 };
 
 export const approvePayment = async (req, res) => {
-  try {
-    const payment = await Payment.findById(req.params.id);
-
-    if (!payment) {
-      return res.status(400).json({ message: "Payment Not Found" });
+    try {
+      const payment = await Payment.findById(req.params.id);
+  
+      if (!payment) {
+        return res.status(404).json({ message: "Payment not found" });
+      }
+  
+      if (payment.onclick) {
+        return res.status(400).json({ message: "Action already performed" });
+      }
+  
+      payment.status = "Paid";
+      payment.onclick = true;
+      await payment.save();
+  
+      res.status(200).json({ message: "Payment approved", payment });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
     }
-
-    payment.status = "Paid";
-    await payment.save();
-
-    res.status(200).json({ message: "Payment Approved" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
-  }
-};
-export const rejectPayment = async (req, res) => {
-  try {
-    const payment = await Payment.findById(req.params.id);
-    if (!payment) return res.status(404).json({ message: "Payment not found" });
-
-    payment.status = "Unpaid";
-    await payment.save();
-
-    res.status(200).json({ message: "Payment rejected", payment });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
-  }
-};
+  };
+  
+  export const rejectPayment = async (req, res) => {
+    try {
+      const payment = await Payment.findById(req.params.id);
+  
+      if (!payment) {
+        return res.status(404).json({ message: "Payment not found" });
+      }
+  
+      if (payment.onclick) {
+        return res.status(400).json({ message: "Action already performed" });
+      }
+  
+      payment.status = "Unpaid";
+      payment.onclick = true;
+      await payment.save();
+  
+      res.status(200).json({ message: "Payment rejected", payment });
+    } catch (error) {
+      res.status(500).json({ message: "Server error", error });
+    }
+  };  

@@ -1,6 +1,5 @@
 
 import mongoose from "mongoose";
-import { type } from "os";
 
 const paymentSchema = new mongoose.Schema({
    userid:{
@@ -22,6 +21,10 @@ const paymentSchema = new mongoose.Schema({
    },membershipid:{
     type:mongoose.Schema.Types.ObjectId,
     ref:"Membership",
+   },
+   onclick:{
+    type:Boolean,
+    default:false
    }
 },{timestamps:true});
 

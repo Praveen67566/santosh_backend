@@ -4,8 +4,9 @@ import { Payment } from "../Models/PaymentModel.js";
 export const activatemembership = async (req,res)=>{
     try {
        const id = req.params;
+       const {status} = req.body;
 
-       if(!id){
+       if(!id || !status){
         res.status(400).json({message:"id and status are required"})
        }
        
