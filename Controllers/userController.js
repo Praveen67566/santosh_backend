@@ -57,7 +57,7 @@ export const register = async (req, res) => {
     }
 
     // Handle referral logic if a referral code is provided in the query string
-    const referredCode = req.query.referralCode || null;
+    const referredCode = req.query.referralCode || req.body.referralCode ||null;
     let referrer = null;
 
     // Create new user instance
