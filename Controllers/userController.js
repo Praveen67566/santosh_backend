@@ -19,29 +19,69 @@ export const register = async (req, res) => {
       gender,
     } = req.body;
 
-    const referredCode = req.query.referralCode;
-    // Get the referral code from the request
-    console.log(referredCode);
-
+    // Check if all fields are provided
     if (
-      !fname || !lname || !email || !phone || !fullPhone ||
-      !countryCode || !city || !password || !gender
+      !fname ||
+      !lname ||
+      !email ||
+      !phone ||
+      !fullPhone ||
+      !countryCode ||
+      !city ||
+      !password ||
+      !gender
     ) {
-      return res.status(400).json({ message: "Credentials are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // ✅ Generate a unique referral code
+    // Check if password meets required strength (e.g., minimum 6 characters)
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long" });
+    }
+
+    // Generate a unique referral code
     let referralCode;
     let codeExists = true;
     while (codeExists) {
       referralCode = crypto.randomBytes(3).toString("hex");
       const existingCode = await User.findOne({ referralCode });
       if (!existingCode) codeExists = false;
+    }
+
+    // Handle referral logic if a referral code is provided in the query string
+    const referredCode = req.query.referralCode || null;
+    let referrer = null;
+
+    if (referredCode) {
+      // Check if the referral code exists
+      referrer = await User.findOne({ referralCode: referredCode });
+      if (!referrer) {
+        return res.status(400).json({ message: "Invalid referral code" });
+      }
+
+      // Check if the referrer has an active membership
+      const membership = await Membership.findOne({ userid: referrer._id });
+      if (!membership || membership.status !== "Active") {
+        return res
+          .status(400)
+          .json({ message: "Referral code is from an inactive member" });
+      }
+
+      // Add the new user to referrer's referrals if not already added
+      const alreadyReferred = referrer.referrals.includes(req.body.email);
+      if (!alreadyReferred) {
+        referrer.wallet = (referrer.wallet || 0) + 350;
+        referrer.referrals.push(req.body.email); // Track one-time referral
+        await referrer.save();
+      }
     }
 
     // Create new user instance
@@ -59,34 +99,15 @@ export const register = async (req, res) => {
       referralCode,
     });
 
-    // ✅ Apply benefit to referrer only once if referredCode is provided
-    if (referredCode) {
-      const referrer = await User.findOne({ referralCode: referredCode });
-      const userid = referrer._id;
-      const membership = await Membership.findOne({ userid });
-      if (referrer && membership.status == 'Active') {
-        if (referrer) {
-          // Check if this new user is already in referrer's referral list
-          const alreadyReferred = referrer.referrals.includes(newUser._id);
-          if (!alreadyReferred) {
-            referrer.wallet = (referrer.wallet || 0) + 350;
-            referrer.referrals.push(newUser._id); // ✅ Track one-time referral
-            await referrer.save();
-          }
-        }
-      }
+    // Save the new user to the database
+    await newUser.save();
 
-      await newUser.save();
-
-      return res.status(201).json({ message: "User Registered Successfully" });
-
-    }
+    return res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Register Error:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -147,7 +168,6 @@ export const login = async (req, res) => {
       token,
       user: userResponse,
     });
-
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -242,11 +262,14 @@ export const getCurrentUser = async (req, res) => {
 export const getReferralLink = async (req, res) => {
   try {
     const user = req.user;
-
+    // console.log(user);
     if (!user) return res.status(404).json({ message: "User not found" });
 
+    const currentUser = await User.findOne({ _id: user.id });
+    // console.log(currentUser);
+
     // Construct the referral link
-    const referralLink = `${process.env.ClientUrl}/register?referralCode=${user.referralCode}`;
+    const referralLink = `${process.env.ClientUrl}/register?referralCode=${currentUser.referralCode}`;
 
     res.status(200).json({
       message: "Referral link fetched successfully",
@@ -257,4 +280,3 @@ export const getReferralLink = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
