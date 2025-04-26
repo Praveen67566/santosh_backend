@@ -6,43 +6,45 @@ export const activatemembership = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
-    // console.log(id);
 
     if (!id || !status) {
       return res.status(400).json({ message: "id and status are required" });
     }
 
-    // Correct: Find by _id
     const updatedMembership = await Membership.findById(id);
 
     if (!updatedMembership) {
       return res.status(400).json({ message: "Unable to find membership" });
     }
 
-    updatedMembership.status = status;
-    await updatedMembership.save();
+    if (updatedMembership.flag) {
+      return res.status(400).json({ message: "Membership already processed" });
+    }
 
     const paymentId = updatedMembership.payment;
 
     if (!paymentId) {
+      return res.status(400).json({ message: "Payment not linked to membership" });
+    }
+
+    const payment = await Payment.findById(paymentId);
+
+    if (!payment) {
       return res.status(400).json({ message: "Payment not found" });
     }
 
-    const pay = await Payment.findByIdAndUpdate(
-      paymentId,
-      { status: status === "Active" ? "Paid" : "Unpaid" },
-      { new: true }
-    );
+    // Update membership status and set flag
+    updatedMembership.status = status;
+    updatedMembership.flag = true;
+    await updatedMembership.save();
 
-    if (!pay) {
-      return res
-        .status(400)
-        .json({ message: "Unable to change payment status" });
-    }
+    // Optionally update payment status as well
+    payment.status = status === "Active" ? "Paid" : "Unpaid";
+    await payment.save();
 
     res.status(200).json({
       message: `Membership ${status.toLowerCase()} successfully`,
-      pay,
+      pay: payment,
       updatedMembership,
     });
   } catch (error) {
@@ -50,3 +52,4 @@ export const activatemembership = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
