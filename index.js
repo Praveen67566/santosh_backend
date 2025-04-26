@@ -23,6 +23,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(express.static('./uploads'))
+
 //Routers
 app.use("/api", userRouter);
 app.use("/api", billingrouter);

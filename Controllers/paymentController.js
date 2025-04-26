@@ -50,8 +50,6 @@ export const makepaymentsformembership = async (req, res) => {
 };
 
 export const makepayment = async (req, res) => {
-//   console.log("BODY:", req.body);
-//   console.log("FILE:", req.file);
   try {
     const { utrNumber, userid } = req.body;
 
