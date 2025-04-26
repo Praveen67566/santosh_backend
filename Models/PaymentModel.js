@@ -1,5 +1,6 @@
 
 import mongoose from "mongoose";
+import { type } from "os";
 
 const paymentSchema = new mongoose.Schema({
    userid:{
@@ -18,6 +19,9 @@ const paymentSchema = new mongoose.Schema({
      type:String,
      enum:['Paid','Unpaid','Pending'],
      default:'Unpaid'
+   },membershipid:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Membership",
    }
 },{timestamps:true});
 

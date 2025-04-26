@@ -55,6 +55,12 @@ export const makepaymentsformembership = async (req, res) => {
       payment: pay._id,
     });
 
+    const payment = await Payment.findOne({id:pay._id});
+
+    payment.membershipid = membership._id;
+
+    await payment.save();
+
     if (!membership) {
       res.status(400).json({ message: "membership not created" });
     }
