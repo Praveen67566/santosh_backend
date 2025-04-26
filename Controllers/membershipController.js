@@ -32,6 +32,7 @@ export const activatemembership = async (req, res) => {
     if (!payment) {
       return res.status(400).json({ message: "Payment not found" });
     }
+    
 
     // Update membership status and set flag
     updatedMembership.status = status;
@@ -40,6 +41,7 @@ export const activatemembership = async (req, res) => {
 
     // Optionally update payment status as well
     payment.status = status === "Active" ? "Paid" : "Unpaid";
+    payment.onclick = true;
     await payment.save();
 
     res.status(200).json({
