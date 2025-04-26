@@ -4,4 +4,4 @@ import { activatemembership } from "../Controllers/membershipController.js";
 
 export const membershipRouter = express.Router();
 
-membershipRouter.put('/activatemembership',activatemembership);
+membershipRouter.put("/activatemembership", activatemembership);
