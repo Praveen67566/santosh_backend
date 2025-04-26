@@ -8,6 +8,7 @@ import { billingrouter } from "./Routers/billingRouter.js";
 import { contactRouter } from "./Routers/contactRouter.js";
 import { membershipRouter } from "./Routers/membershipRouter.js";
 import { paymentRouter } from "./Routers/paymentRouter.js";
+import path from "path";
 
 dotenv.config();
 
@@ -23,7 +24,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static('./uploads'))
+// ✅ Serve static files from 'uploads' folder at '/uploads' URL path
+app.use("/uploads", express.static(path.resolve('./uploads')));
 
 //Routers
 app.use("/api", userRouter);
