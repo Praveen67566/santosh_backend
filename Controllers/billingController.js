@@ -62,7 +62,8 @@ export const createBilling = async (req, res) => {
 
 export const getCurrentUserBilling = async (req, res) => {
   try {
-    const userId = req.params.userid || req.user?.id; // use req.user if auth middleware exists
+    // const userId = req.params.userid || req.user?.id;
+    const userId = req.params.id;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
@@ -87,7 +88,7 @@ export const getCurrentUserBilling = async (req, res) => {
 
 export const deleteCurrentUserBilling = async (req, res) => {
   try {
-    const billid = req.params.billingid;
+    const billid = req.params.id;
 
     if (!billid) {
       return res.status(400).json({ message: "bill id is required" });
@@ -95,18 +96,19 @@ export const deleteCurrentUserBilling = async (req, res) => {
 
     const isdeleted = await Billing.findOneAndDelete({ _id: billid });
 
-    if (isdeleted) {
-      res.status(500).json({ message: "Internal Server Error" });
+    if (!isdeleted) {
+      return res.status(404).json({ message: "Billing record not found" });
     }
     res.status(200).json({ message: "bill is deleted" });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 export const updateCurrentUserBilling = async (req, res) => {
   try {
-    const billid = req.params.billingid;
+    const billid = req.params.id;
 
     if (!billid) {
       return res.status(400).json({ message: "bill id is required" });
@@ -125,6 +127,22 @@ export const updateCurrentUserBilling = async (req, res) => {
     }
     res.status(200).json({ message: "bill is updated" });
   } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getAllBillings = async (req, res) => {
+  try {
+    const billings = await Billing.find({}).sort({ createdAt: -1 });
+
+    if (!billings || billings.length === 0) {
+      return res.status(404).json({ message: "No billing records found" });
+    }
+
+    res.status(200).json({ billings });
+  } catch (error) {
+    console.error("Get All Billings Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
