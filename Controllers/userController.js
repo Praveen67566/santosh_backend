@@ -41,26 +41,7 @@ export const register = async (req, res) => {
     }
 
     const referredCode = req.query.referralCode || req.body.referralCode || null;
-
-    // STEP 1: Create user
-    const newUser = new User({
-      fname,
-      lname,
-      email,
-      gender,
-      phone,
-      city,
-      password,
-      fullPhone,
-      countryCode,
-      referralCode,
-      referredCode, // ADD referredCode here!
-    });
-
-    // STEP 2: Save user first to generate _id
-    await newUser.save();
-
-    // STEP 3: Handle referral after user is saved
+    
     if (referredCode) {
       const referrer = await User.findOne({ referralCode: referredCode });
       if (!referrer) {
@@ -86,6 +67,26 @@ export const register = async (req, res) => {
         await referrer.save();
       }
     }
+    // STEP 1: Create user
+    const newUser = new User({
+      fname,
+      lname,
+      email,
+      gender,
+      phone,
+      city,
+      password,
+      fullPhone,
+      countryCode,
+      referralCode,
+      referredCode, // ADD referredCode here!
+    });
+
+    // STEP 2: Save user first to generate _id
+    await newUser.save();
+
+    // STEP 3: Handle referral after user is saved
+    
 
     return res.status(201).json({ message: "User registered successfully" });
 
@@ -94,6 +95,7 @@ export const register = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
