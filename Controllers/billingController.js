@@ -2,16 +2,17 @@ import { Billing } from "../Models/billingModel.js";
 
 export const createBilling = async (req, res) => {
   try {
-      const {userid,username, cent_Account, billing_startdate, billing_enddate, total_profit, profit_sharing, ispaymentreceived, received_date} = req.body;
+      const {email,userid,username, cent_Account, billing_startdate, billing_enddate, total_profit, profit_sharing, ispaymentreceived, received_date} = req.body;
 
       const bill_image = req.file.filename;
 
-      if (!userid ||!username || !cent_Account || !billing_startdate || !billing_enddate || !total_profit || !profit_sharing || !ispaymentreceived || !received_date) {
+      if (!userid ||!email ||!username || !cent_Account || !billing_startdate || !billing_enddate || !total_profit || !profit_sharing || !ispaymentreceived || !received_date) {
         res.status(404).json({ message: "fields are required" })
       }
 
       const bill = await Billing.create({
         userid,
+        email,
         username,
         cent_Account,
         billing_startdate,
@@ -55,3 +56,51 @@ export const getCurrentUserBilling = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+export const deleteCurrentUserBilling = async (req,res)=>{
+  try{
+    const billid = req.params.billingid;
+    
+
+    if(!billid){
+      return res.status(400).json({message:"bill id is required"});
+    }
+
+    const isdeleted = await Billing.findOneAndDelete({_id:billid});
+     
+
+    if(isdeleted){
+      res.status(500).json({message:"Internal Server Error"});
+    }
+    res.status(200).json({message:"bill is deleted"})
+
+
+  }catch(error){
+    res.status(500).json({message:"Internal Server Error"});
+  }
+}
+
+export const updateCurrentUserBilling = async (req,res)=>{
+  try{
+    const billid = req.params.billingid;
+    
+
+    if(!billid){
+      return res.status(400).json({message:"bill id is required"});
+    }
+
+    const isupdated = await Billing.findOneAndUpdate({_id:billid},{
+      ...req.body
+    },
+  {new:true});
+     
+
+    if(isupdated){
+      res.status(500).json({message:"Internal Server Error"});
+    }
+    res.status(200).json({message:"bill is updated"})
+
+
+  }catch(error){
+    res.status(500).json({message:"Internal Server Error"});
+  }
+}

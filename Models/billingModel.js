@@ -4,6 +4,10 @@ const billingSchema = new mongoose.Schema({
      bill_image:{
         type:String,
      },
+     userid:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User"
+     },
      email:{
         type:String,
         unique:true
