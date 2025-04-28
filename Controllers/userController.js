@@ -42,31 +42,6 @@ export const register = async (req, res) => {
 
     const referredCode = req.query.referralCode || req.body.referralCode || null;
     
-    if (referredCode) {
-      const referrer = await User.findOne({ referralCode: referredCode });
-      if (!referrer) {
-        return res.status(400).json({ message: "Invalid referral code" });
-      }
-
-      const membership = await Membership.findOne({ userid: referrer._id });
-      if (!membership || membership.status !== "Active") {
-        return res.status(400).json({ message: "Referral code is from an inactive member" });
-      }
-
-      // Check if already referred
-      const alreadyReferred = referrer.referrals.some(ref => ref.id.toString() === newUser._id.toString());
-
-      if (!alreadyReferred) {
-        referrer.wallet = (referrer.wallet || 0) + 350;
-
-        referrer.referrals.push({
-          id: newUser._id,
-          email: newUser.email,
-        });
-
-        await referrer.save();
-      }
-    }
     // STEP 1: Create user
     const newUser = new User({
       fname,
@@ -79,14 +54,47 @@ export const register = async (req, res) => {
       fullPhone,
       countryCode,
       referralCode,
-      referredCode, // ADD referredCode here!
+      referredCode,
+      firsttimeregister:true // ADD referredCode here!
     });
 
     // STEP 2: Save user first to generate _id
     await newUser.save();
 
     // STEP 3: Handle referral after user is saved
-    
+    if (referredCode) {
+      const referrer = await User.findOne({ referralCode: referredCode });
+      console.log(referrer);
+      if (!referrer) {
+        return res.status(400).json({ message: "Invalid referral code" });
+      }
+
+      const membership = await Membership.findOne({ userid: referrer._id });
+      console.log(membership)
+      if (!membership || membership.status !== "Active") {
+        return res.status(400).json({ message: "Referral code is from an inactive member" });
+      }
+      
+      if(newUser.firsttimeregister){
+        referrer.wallet = (referrer.wallet || 0) + 350;
+
+        referrer.referrals.push(newUser._id);
+        await referrer.save();
+      }else{
+        const alreadyReferred = referrer.referrals.some(ref => ref.id.toString() === newUser._id.toString());
+        console.log(alreadyReferred);
+  
+        if (!alreadyReferred) {
+          referrer.wallet = (referrer.wallet || 0) + 350;
+  
+          referrer.referrals.push(newUser._id);
+  
+          await referrer.save();
+        }
+      }
+      // Check if already referred
+      
+    }
 
     return res.status(201).json({ message: "User registered successfully" });
 

@@ -59,6 +59,9 @@ const userSchema = new mongoose.Schema(
     },
     wallet:{
       type:Number
+    },
+    firsttimeregister:{
+      type:Boolean,
     }
   },
   { timestamps: true }
