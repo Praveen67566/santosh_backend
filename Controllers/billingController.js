@@ -1,4 +1,5 @@
 import { Billing } from "../Models/billingModel.js";
+import { User } from "../Models/userModel.js";
 
 export const createBilling = async (req, res) => {
   try {
@@ -10,8 +11,14 @@ export const createBilling = async (req, res) => {
         res.status(404).json({ message: "fields are required" })
       }
 
+      const user = await User.findOne({email});
+
+      if(!user){
+        res.status(400).json({message:"User not found || incorrect email"})
+      }
+
       const bill = await Billing.create({
-        userid,
+        userid:user._id,
         email,
         username,
         cent_Account,
