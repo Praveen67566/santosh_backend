@@ -1,6 +1,5 @@
 import { Contact } from "../Models/contactModel.js"
 
-// Add Contact
 export const addcontact = async (req, res) => {
   try {
     const { name, email, message } = req.body;
@@ -40,6 +39,3 @@ export const getallcontact = async (req,res)=>{
         res.status(500).json({message:"Internal Server Error"});
     }
 }
-
-// Get All Contacts
-
