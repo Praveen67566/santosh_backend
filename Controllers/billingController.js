@@ -3,11 +3,11 @@ import { User } from "../Models/userModel.js";
 
 export const createBilling = async (req, res) => {
   try {
-      const {email,userid,username, cent_Account, billing_startdate, billing_enddate, total_profit, profit_sharing, ispaymentreceived, received_date} = req.body;
+      const {email,username, cent_Account, billing_startdate, billing_enddate, total_profit, profit_sharing, ispaymentreceived, received_date} = req.body;
 
       const bill_image = req.file.filename;
 
-      if (!userid ||!email ||!username || !cent_Account || !billing_startdate || !billing_enddate || !total_profit || !profit_sharing || !ispaymentreceived || !received_date) {
+      if (!email ||!username || !cent_Account || !billing_startdate || !billing_enddate || !total_profit || !profit_sharing || !ispaymentreceived || !received_date) {
         res.status(404).json({ message: "fields are required" })
       }
 
