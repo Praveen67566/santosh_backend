@@ -9,6 +9,7 @@ import { contactRouter } from "./Routers/contactRouter.js";
 import { membershipRouter } from "./Routers/membershipRouter.js";
 import { paymentRouter } from "./Routers/paymentRouter.js";
 import path from "path";
+import { withdrawalRouter } from "./Routers/withdrawalRouter.js";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use("/api", billingrouter);
 app.use("/api/contactinfo", contactRouter);
 app.use("/api", membershipRouter);
 app.use("/api", paymentRouter);
+app.use("/api",withdrawalRouter);
 
 const PORT = process.env.PORT;
 
