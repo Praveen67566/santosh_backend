@@ -15,7 +15,6 @@ export const referraldetails = async (req, res) => {
     }
 
     let referredUsers = [];
-    let refuser = {};
 
     if (user.referrals.length > 0) {
       const ref = user.referrals;
@@ -23,8 +22,8 @@ export const referraldetails = async (req, res) => {
       for (let i = 0; i < ref.length; i++) {
         const id = ref[i];
 
-        refuser = await User.findOne({ _id: id });
-        const membership = await Membership.findOne({_id:id});
+        let refuser = await User.findOne({ _id: id });
+        const membership = await Membership.findOne({userid:id});
         refuser.membership = membership ||null
         referredUsers.push(refuser);
       }
