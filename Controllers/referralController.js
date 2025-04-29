@@ -15,6 +15,7 @@ export const referraldetails = async (req, res) => {
     }
 
     let referredUsers = [];
+    let membershipAll = [];
 
     if (user.referrals.length > 0) {
       const ref = user.referrals;
@@ -24,11 +25,11 @@ export const referraldetails = async (req, res) => {
 
         let refuser = await User.findOne({ _id: id });
         const membership = await Membership.findOne({userid:id});
-        refuser.membership = membership ||null
         referredUsers.push(refuser);
+        membershipAll.push(membership);
       }
 
-      return res.status(200).json({ referredUsers });
+      return res.status(200).json({ referredUsers,membershipAll});
     }
 
     res.status(200).json({ message: "No Referrals are found" });
