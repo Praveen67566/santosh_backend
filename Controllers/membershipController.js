@@ -24,7 +24,9 @@ export const activatemembership = async (req, res) => {
     const paymentId = updatedMembership.payment;
 
     if (!paymentId) {
-      return res.status(400).json({ message: "Payment not linked to membership" });
+      return res
+        .status(400)
+        .json({ message: "Payment not linked to membership" });
     }
 
     const payment = await Payment.findById(paymentId);
@@ -32,7 +34,6 @@ export const activatemembership = async (req, res) => {
     if (!payment) {
       return res.status(400).json({ message: "Payment not found" });
     }
-    
 
     // Update membership status and set flag
     updatedMembership.status = status;
@@ -54,4 +55,3 @@ export const activatemembership = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-

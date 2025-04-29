@@ -39,8 +39,9 @@ export const makepaymentsformembership = async (req, res) => {
       return res.status(400).json({ message: "utrNumber and userid required" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename
-      }`;
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
 
     const pay = await Payment.create({
       utrNumber,
@@ -81,8 +82,9 @@ export const makepayment = async (req, res) => {
       return res.status(400).json({ message: "utrNumber and userid required" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename
-      }`;
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
+      req.file.filename
+    }`;
 
     const pay = await Payment.create({
       userid: userid,
@@ -124,7 +126,6 @@ export const approvePayment = async (req, res) => {
 
 export const rejectPayment = async (req, res) => {
   try {
-
     const id = req.params._id;
 
     const payment = await Payment.deleteOne({ _id: req.params.id });
@@ -132,7 +133,9 @@ export const rejectPayment = async (req, res) => {
     const membership = await Membership.deleteOne({ payment: id });
 
     if (membership) {
-      res.status(200).json({ message: "Payment rejected", payment, membership });
+      res
+        .status(200)
+        .json({ message: "Payment rejected", payment, membership });
     }
     if (!payment) {
       return res.status(500).json({ message: "Payment not deleted" });
