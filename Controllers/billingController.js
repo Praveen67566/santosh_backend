@@ -113,23 +113,22 @@ export const updateCurrentUserBilling = async (req, res) => {
     const billid = req.params.id;
 
     if (!billid) {
-      return res.status(400).json({ message: "bill id is required" });
+      return res.status(400).json({ message: "Bill ID is required" });
     }
 
     const isupdated = await Billing.findOneAndUpdate(
       { _id: billid },
-      {
-        ...req.body,
-      },
+      { ...req.body },
       { new: true }
     );
 
-    if (isupdated) {
-      res.status(500).json({ message: "Internal Server Error" });
+    if (!isupdated) {
+      return res.status(404).json({ message: "Bill not found or update failed" });
     }
-    res.status(200).json({ message: "bill is updated" });
+
+    res.status(200).json({ message: "Bill is updated", bill: isupdated });
   } catch (error) {
-    console.error(error);
+    console.error("Update Billing Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
