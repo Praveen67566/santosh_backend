@@ -1,38 +1,35 @@
 import { User } from "../Models/userModel.js";
 
-const referraldetails = async (req, res) => {
-    try {
-        const { id } = req.body;
-        if (!id) {
-            res.status(400).json({ message: "ID is required" })
-        }
-
-
-        const user = await User.findOne({ _id: id });
-
-        if (!user) {
-            res.status(404).json({ message: "User Not Found" });
-        }
-        
-        let referredUsers = [];
-
-        if (user.referrals.length > 0) {
-            const ref = user.referrals;
-            
-
-            for (let i = 0; i < ref.length; i++) {
-                const id = ref[0];
-
-                referredUsers = await User.findOne({ _id: id });
-            }
-
-            return res.status(200).json({referredUsers});
-        }
-
-        res.status(200).json({message:"No Referrals are found"});
-
-
-    } catch (error) {
-       res.status(500).json({message:"Internal Srever Error"});
+export const referraldetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ message: "ID is required" });
     }
-}
+
+    const user = await User.findOne({ _id: id });
+
+    if (!user) {
+      res.status(404).json({ message: "User Not Found" });
+    }
+
+    let referredUsers = [];
+
+    if (user.referrals.length > 0) {
+      const ref = user.referrals;
+
+      for (let i = 0; i < ref.length; i++) {
+        const id = ref[0];
+
+        referredUsers = await User.findOne({ _id: id });
+      }
+
+      return res.status(200).json({ referredUsers });
+    }
+
+    res.status(200).json({ message: "No Referrals are found" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Srever Error" });
+  }
+};

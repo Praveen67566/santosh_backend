@@ -11,6 +11,7 @@ import { paymentRouter } from "./Routers/paymentRouter.js";
 import path from "path";
 import { withdrawalRouter } from "./Routers/withdrawalRouter.js";
 import { walletRouter } from "./Routers/walletRouter.js";
+import { referralRouter } from "./Routers/referralRouter.js";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 // ✅ Serve static files from 'uploads' folder at '/uploads' URL path
-app.use("/uploads", express.static(path.resolve('./uploads')));
+app.use("/uploads", express.static(path.resolve("./uploads")));
 
 //Routers
 app.use("/api", userRouter);
@@ -35,8 +36,9 @@ app.use("/api", billingrouter);
 app.use("/api/contactinfo", contactRouter);
 app.use("/api", membershipRouter);
 app.use("/api", paymentRouter);
-app.use("/api",withdrawalRouter);
-app.use("/api",walletRouter);
+app.use("/api", withdrawalRouter);
+app.use("/api", walletRouter);
+app.use("/api", referralRouter);
 
 const PORT = process.env.PORT;
 
