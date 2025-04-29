@@ -5,10 +5,10 @@ export const requestwithdrawal = async (req,res)=>{
      try {
         const {userid,amount,accountNo,ifsccode,upiId} = req.body;
 
-        if(!userid||!amount ||!accountNo ||!ifsccode ||!upiId){
-            res.status(400).json({message:"Fields are required.."});
+        if(!userid){
+         res.status(400).json({message:"UserId is required"});
         }
-
+        
         const withdrawal = await Withdrawal.create({
             userid,
             amount,
