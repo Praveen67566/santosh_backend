@@ -1,6 +1,7 @@
 import express from "express";
-import {requestwithdrawal} from "../Controllers/withdrawalController.js"
+import {requestwithdrawal,getallwithdrawal} from "../Controllers/withdrawalController.js"
 
 export const withdrawalRouter = express.Router();
 
 withdrawalRouter.post('/requestwithdrawal',requestwithdrawal);
+withdrawalRouter.get('/getAllwithdrawal',getallwithdrawal);
