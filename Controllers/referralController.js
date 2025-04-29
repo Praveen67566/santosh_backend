@@ -1,4 +1,5 @@
 import { User } from "../Models/userModel.js";
+import {Membership} from "../Models/membershipModel.js"
 
 export const referraldetails = async (req, res) => {
   try {
@@ -14,6 +15,7 @@ export const referraldetails = async (req, res) => {
     }
 
     let referredUsers = [];
+    let refuser = {};
 
     if (user.referrals.length > 0) {
       const ref = user.referrals;
@@ -21,7 +23,9 @@ export const referraldetails = async (req, res) => {
       for (let i = 0; i < ref.length; i++) {
         const id = ref[0];
 
-        referredUsers = await User.findOne({ _id: id });
+        refuser = await User.findOne({ _id: id });
+        refuser.membership = await Membership.findOne({_id:id});
+        referredUsers.push(refuser);
       }
 
       return res.status(200).json({ referredUsers });
@@ -34,4 +38,3 @@ export const referraldetails = async (req, res) => {
   }
 };
 
-Headershmdbcmbds;
