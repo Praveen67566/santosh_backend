@@ -15,8 +15,6 @@ export const activatemembership = async (req, res) => {
     const updatedMembership = await Membership.findById(id);
     const userid = updatedMembership.userid;
     const user = await User.findOne({_id:userid});
-    const refereduser = await User.findOne({referralCode:user.referredCode});
-    refereduser.wallet += 350;
 
     if (!updatedMembership) {
       return res.status(400).json({ message: "Unable to find membership" });
@@ -49,6 +47,10 @@ export const activatemembership = async (req, res) => {
     payment.status = status === "Active" ? "Paid" : "Unpaid";
     payment.onclick = true;
     await payment.save();
+
+    
+    const refereduser = await User.findOne({referralCode:user.referredCode});
+    refereduser.wallet += 350;
 
     res.status(200).json({
       message: `Membership ${status.toLowerCase()} successfully`,
