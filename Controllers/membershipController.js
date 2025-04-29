@@ -1,7 +1,6 @@
 // membershipController.js
 import { Membership } from "../Models/membershipModel.js";
 import { Payment } from "../Models/PaymentModel.js";
-import { User } from "../Models/userModel.js";
 
 export const activatemembership = async (req, res) => {
   try {
@@ -25,9 +24,7 @@ export const activatemembership = async (req, res) => {
     const paymentId = updatedMembership.payment;
 
     if (!paymentId) {
-      return res
-        .status(400)
-        .json({ message: "Payment not linked to membership" });
+      return res.status(400).json({ message: "Payment not linked to membership" });
     }
 
     const payment = await Payment.findById(paymentId);
@@ -35,6 +32,7 @@ export const activatemembership = async (req, res) => {
     if (!payment) {
       return res.status(400).json({ message: "Payment not found" });
     }
+    
 
     // Update membership status and set flag
     updatedMembership.status = status;
@@ -45,11 +43,6 @@ export const activatemembership = async (req, res) => {
     payment.status = status === "Active" ? "Paid" : "Unpaid";
     payment.onclick = true;
     await payment.save();
-    
-    const userid = updatedMembership.userid;
-    const user = await User.findOne({_id:userid});
-    const refereduser = await User.findOne({referralCode:user.referredCode});
-    refereduser.wallet += 350;
 
     res.status(200).json({
       message: `Membership ${status.toLowerCase()} successfully`,
@@ -61,3 +54,5 @@ export const activatemembership = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+ahdhdj;
