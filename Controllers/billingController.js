@@ -116,9 +116,40 @@ export const updateCurrentUserBilling = async (req, res) => {
       return res.status(400).json({ message: "Bill ID is required" });
     }
 
+    // Destructure allowed fields
+    const {
+      username,
+      cent_Account,
+      billing_startdate,
+      billing_enddate,
+      total_profit,
+      profit_sharing,
+      ispaymentreceived,
+      received_date,
+      // email is not extracted to prevent update
+    } = req.body;
+
+    // Prepare update object
+    const updateData = {
+      username,
+      cent_Account,
+      billing_startdate,
+      billing_enddate,
+      total_profit,
+      profit_sharing,
+      ispaymentreceived,
+      received_date,
+    };
+
+    // Attach image URL if file is uploaded
+    if (req.file) {
+      updateData.bill_image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    }
+
+    // Perform the update
     const isupdated = await Billing.findOneAndUpdate(
       { _id: billid },
-      { ...req.body },
+      updateData,
       { new: true }
     );
 
@@ -132,6 +163,7 @@ export const updateCurrentUserBilling = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 export const getAllBillings = async (req, res) => {
   try {
