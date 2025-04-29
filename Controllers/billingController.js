@@ -15,7 +15,7 @@ export const createBilling = async (req, res) => {
       received_date,
     } = req.body;
 
-    const bill_image = req.file.filename;
+    const bill_image = `${ClientUrl}/uploads/${req.file.filename}`;
 
     if (
       !email ||
