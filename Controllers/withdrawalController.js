@@ -8,7 +8,12 @@ export const requestwithdrawal = async (req,res)=>{
         if(!userid){
          res.status(400).json({message:"UserId is required"});
         }
-        
+
+        const user = await User.findOne({_id:userid});
+
+        if(!user){
+         
+        }
         const withdrawal = await Withdrawal.create({
             userid,
             amount,

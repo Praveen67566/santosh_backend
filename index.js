@@ -10,6 +10,7 @@ import { membershipRouter } from "./Routers/membershipRouter.js";
 import { paymentRouter } from "./Routers/paymentRouter.js";
 import path from "path";
 import { withdrawalRouter } from "./Routers/withdrawalRouter.js";
+import { walletRouter } from "./Routers/walletRouter.js";
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use("/api/contactinfo", contactRouter);
 app.use("/api", membershipRouter);
 app.use("/api", paymentRouter);
 app.use("/api",withdrawalRouter);
+app.use("/api",walletRouter);
 
 const PORT = process.env.PORT;
 
