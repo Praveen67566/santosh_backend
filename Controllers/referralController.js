@@ -21,10 +21,11 @@ export const referraldetails = async (req, res) => {
       const ref = user.referrals;
 
       for (let i = 0; i < ref.length; i++) {
-        const id = ref[0];
+        const id = ref[i];
 
         refuser = await User.findOne({ _id: id });
-        refuser.membership = await Membership.findOne({_id:id});
+        const membership = await Membership.findOne({_id:id});
+        refuser.membership = membership ||null
         referredUsers.push(refuser);
       }
 
