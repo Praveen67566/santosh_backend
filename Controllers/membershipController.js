@@ -1,6 +1,7 @@
 // membershipController.js
 import { Membership } from "../Models/membershipModel.js";
 import { Payment } from "../Models/PaymentModel.js";
+import { User } from "../Models/userModel.js";
 
 export const activatemembership = async (req, res) => {
   try {
@@ -12,6 +13,10 @@ export const activatemembership = async (req, res) => {
     }
 
     const updatedMembership = await Membership.findById(id);
+    const userid = updatedMembership.userid;
+    const user = await User.findOne({_id:userid});
+    const refereduser = await User.findOne({referralCode:user.referredCode});
+    refereduser.wallet += 350;
 
     if (!updatedMembership) {
       return res.status(400).json({ message: "Unable to find membership" });
