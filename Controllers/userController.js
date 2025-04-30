@@ -19,7 +19,17 @@ export const register = async (req, res) => {
       gender,
     } = req.body;
 
-    if (!fname || !lname || !email || !phone || !fullPhone || !countryCode || !city || !password || !gender) {
+    if (
+      !fname ||
+      !lname ||
+      !email ||
+      !phone ||
+      !fullPhone ||
+      !countryCode ||
+      !city ||
+      !password ||
+      !gender
+    ) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -29,7 +39,9 @@ export const register = async (req, res) => {
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long" });
     }
 
     let referralCode;
@@ -40,8 +52,9 @@ export const register = async (req, res) => {
       if (!existingCode) codeExists = false;
     }
 
-    const referredCode = req.query.referralCode || req.body.referralCode || null;
-    
+    const referredCode =
+      req.query.referralCode || req.body.referralCode || null;
+
     // STEP 1: Create user
     const newUser = new User({
       fname,
@@ -55,7 +68,7 @@ export const register = async (req, res) => {
       countryCode,
       referralCode,
       referredCode,
-      firsttimeregister:true // ADD referredCode here!
+      firsttimeregister: true, // ADD referredCode here!
     });
 
     // STEP 2: Save user first to generate _id
@@ -70,34 +83,36 @@ export const register = async (req, res) => {
       }
 
       const membership = await Membership.findOne({ userid: referrer._id });
-      console.log(membership)
+      console.log(membership);
       if (!membership || membership.status !== "Active") {
-        return res.status(400).json({ message: "Referral code is from an inactive member" });
+        return res
+          .status(400)
+          .json({ message: "Referral code is from an inactive member" });
       }
-      
-      if(newUser.firsttimeregister){
-        referrer.wallet = (referrer.wallet || 0) + 350;
+
+      if (newUser.firsttimeregister) {
+        // referrer.wallet = (referrer.wallet || 0) + 350;
 
         referrer.referrals.push(newUser._id);
         await referrer.save();
-      }else{
-        const alreadyReferred = referrer.referrals.some(ref => ref.id.toString() === newUser._id.toString());
+      } else {
+        const alreadyReferred = referrer.referrals.some(
+          (ref) => ref.id.toString() === newUser._id.toString()
+        );
         console.log(alreadyReferred);
-  
+
         if (!alreadyReferred) {
-          referrer.wallet = (referrer.wallet || 0) + 350;
-  
+          // referrer.wallet = (referrer.wallet || 0) + 350;
+
           referrer.referrals.push(newUser._id);
-  
+
           await referrer.save();
         }
       }
       // Check if already referred
-      
     }
 
     return res.status(201).json({ message: "User registered successfully" });
-
   } catch (error) {
     console.error("Register Error:", error);
     return res.status(500).json({ message: "Internal server error" });

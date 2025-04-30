@@ -1,6 +1,6 @@
-// membershipController.js
 import { Membership } from "../Models/membershipModel.js";
 import { Payment } from "../Models/PaymentModel.js";
+import { User } from "../Models/userModel.js";
 
 export const activatemembership = async (req, res) => {
   try {
@@ -8,51 +8,55 @@ export const activatemembership = async (req, res) => {
     const { status } = req.body;
 
     if (!id || !status) {
-      return res.status(400).json({ message: "id and status are required" });
+      return res
+        .status(400)
+        .json({ message: "Membership ID and status are required." });
     }
 
-    const updatedMembership = await Membership.findById(id);
-
-    if (!updatedMembership) {
-      return res.status(400).json({ message: "Unable to find membership" });
+    const membership = await Membership.findById(id);
+    if (!membership) {
+      return res.status(404).json({ message: "Membership not found." });
     }
 
-    if (updatedMembership.flag) {
-      return res.status(400).json({ message: "Membership already processed" });
+    if (membership.flag) {
+      return res.status(400).json({ message: "Membership already processed." });
     }
 
-    const paymentId = updatedMembership.payment;
-
-    if (!paymentId) {
-      return res.status(400).json({ message: "Payment not linked to membership" });
-    }
-
-    const payment = await Payment.findById(paymentId);
-
+    const payment = await Payment.findById(membership.payment);
     if (!payment) {
-      return res.status(400).json({ message: "Payment not found" });
+      return res
+        .status(404)
+        .json({ message: "Payment not found or not linked." });
     }
-    
 
-    // Update membership status and set flag
-    updatedMembership.status = status;
-    updatedMembership.flag = true;
-    await updatedMembership.save();
+    // Update membership and payment
+    membership.status = status;
+    membership.flag = true;
+    await membership.save();
 
-    // Optionally update payment status as well
     payment.status = status === "Active" ? "Paid" : "Unpaid";
     payment.onclick = true;
     await payment.save();
 
-    res.status(200).json({
-      message: `Membership ${status.toLowerCase()} successfully`,
-      pay: payment,
-      updatedMembership,
+    // Handle referral bonus if activated
+    if (status === "Active") {
+      const user = await User.findById(membership.userid);
+      if (user?.referredCode) {
+        const refUser = await User.findOne({ referralCode: user.referredCode });
+        if (refUser) {
+          refUser.wallet = (refUser.wallet || 0) + 350;
+          await refUser.save();
+        }
+      }
+    }
+
+    return res.status(200).json({
+      message: `Membership ${status.toLowerCase()} successfully.`,
+      payment,
+      membership,
     });
   } catch (error) {
-    console.log(error);
+    console.error("ActivateMembership Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-ahdhdj;
