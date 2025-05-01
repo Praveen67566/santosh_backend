@@ -169,8 +169,8 @@ export const getAllBillings = async (req, res) => {
   try {
     const billings = await Billing.find({}).sort({ createdAt: -1 });
 
-    if (!billings || billings.length === 0) {
-      return res.status(404).json({ message: "No billing records found" });
+    if (!billings) {
+      return res.status(200).json({ message: "No billings found",billings});
     }
 
     res.status(200).json({ billings });
