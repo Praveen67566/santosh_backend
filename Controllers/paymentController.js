@@ -48,9 +48,7 @@ export const makepaymentsformembership = async (req, res) => {
       return res.status(400).json({ message: "utrNumber and userid required" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
-      req.file.filename
-    }`;
+    const fileUrl = `${process.env.SERVER_URL}/uploads/${req.file.filename}`;
 
     const pay = await Payment.create({
       utrNumber,
@@ -91,9 +89,7 @@ export const makepayment = async (req, res) => {
       return res.status(400).json({ message: "utrNumber and userid required" });
     }
 
-    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${
-      req.file.filename
-    }`;
+    const fileUrl = `${process.env.SERVER_URL}/uploads/${req.file.filename}`;
 
     const pay = await Payment.create({
       userid: userid,
