@@ -1,5 +1,6 @@
 import { Membership } from "../Models/membershipModel.js";
 import { Payment } from "../Models/PaymentModel.js";
+import {User} from "../Models/userModel.js";
 
 export const getAllPayments = async (req, res) => {
   try {
@@ -21,11 +22,19 @@ export const getAllPaymentsFormembership = async (req, res) => {
 
     const membership = await Membership.find({});
 
+    const users = [];
+
+    for(let i=0;i<membership.length;i++){
+      const userid = membership[i].userid;
+      const user = await User.findOne({_id:userid})
+      users.push(user);
+    }
+
     if (!payments) {
       res.status(400).json({ message: "Payments not found" });
     }
 
-    res.status(200).json({ payments, membership });
+    res.status(200).json({ payments, membership,users});
   } catch (error) {
     res.status(500).json({ message: "Internal Sever Error" });
   }
