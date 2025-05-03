@@ -12,6 +12,7 @@ import path from "path";
 import { withdrawalRouter } from "./Routers/withdrawalRouter.js";
 import { walletRouter } from "./Routers/walletRouter.js";
 import { referralRouter } from "./Routers/referralRouter.js";
+import { brokerRouter } from "./Routers/brokerRouter.js";
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use("/api", paymentRouter);
 app.use("/api", withdrawalRouter);
 app.use("/api", walletRouter);
 app.use("/api", referralRouter);
+app.use('/api',brokerRouter);
 
 const PORT = process.env.PORT;
 

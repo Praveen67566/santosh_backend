@@ -21,14 +21,10 @@ export const createBilling = async (req, res) => {
 
     if (
       !email ||
-      !username ||
-      !cent_Account ||
       !billing_startdate ||
       !billing_enddate ||
       !total_profit ||
-      !profit_sharing ||
-      !ispaymentreceived ||
-      !received_date
+      !profit_sharing
     ) {
       return res.status(400).json({ message: "All fields are required." });
     }
