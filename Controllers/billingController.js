@@ -15,7 +15,7 @@ export const createBilling = async (req, res) => {
       received_date,
     } = req.body;
 
-    const bill_image = `${req.protocol}://${req.get("host")}/uploads/${
+    const bill_image = `${process.env.SERVER_URL}/uploads/${
       req.file.filename
     }`;
 
