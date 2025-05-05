@@ -1,5 +1,4 @@
 import express from "express";
-import { upload } from "../Common/multerConf.js";
 import {
   createBilling,
   deleteCurrentUserBilling,
@@ -10,16 +9,12 @@ import {
 
 export const billingrouter = express.Router();
 
-billingrouter.post("/billing", upload.single("bill_image"), createBilling);
+billingrouter.post("/billing", createBilling);
 
 billingrouter.get("/billing/:id", getCurrentUserBilling);
 
 billingrouter.delete("/billing/:id", deleteCurrentUserBilling);
 
-billingrouter.put(
-  "/billing/:id",
-  upload.single("bill_image"),
-  updateCurrentUserBilling
-);
+billingrouter.put("/billing/:id", updateCurrentUserBilling);
 
 billingrouter.get("/getallbilling", getAllBillings);
