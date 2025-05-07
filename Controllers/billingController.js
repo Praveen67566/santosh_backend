@@ -15,10 +15,6 @@ export const createBilling = async (req, res) => {
       received_date,
     } = req.body;
 
-    const bill_image = `${process.env.SERVER_URL}/uploads/${
-      req.file.filename
-    }`;
-
     if (
       !email ||
       !billing_startdate ||
@@ -48,7 +44,6 @@ export const createBilling = async (req, res) => {
       profit_sharing,
       ispaymentreceived,
       received_date,
-      bill_image,
     });
 
     res.status(201).json({ bill });
@@ -137,11 +132,6 @@ export const updateCurrentUserBilling = async (req, res) => {
       received_date,
     };
 
-    // Attach image URL if file is uploaded
-    if (req.file) {
-      updateData.bill_image = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    }
-
     // Perform the update
     const isupdated = await Billing.findOneAndUpdate(
       { _id: billid },
@@ -150,7 +140,9 @@ export const updateCurrentUserBilling = async (req, res) => {
     );
 
     if (!isupdated) {
-      return res.status(404).json({ message: "Bill not found or update failed" });
+      return res
+        .status(404)
+        .json({ message: "Bill not found or update failed" });
     }
 
     res.status(200).json({ message: "Bill is updated", bill: isupdated });
@@ -160,13 +152,12 @@ export const updateCurrentUserBilling = async (req, res) => {
   }
 };
 
-
 export const getAllBillings = async (req, res) => {
   try {
     const billings = await Billing.find({}).sort({ createdAt: -1 });
 
     if (!billings) {
-      return res.status(200).json({ message: "No billings found",billings});
+      return res.status(200).json({ message: "No billings found", billings });
     }
 
     res.status(200).json({ billings });
