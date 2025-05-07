@@ -13,11 +13,14 @@ const billingSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    contact:{
+      type:String,
+    },
     username: {
       type: String,
     },
     cent_Account: {
-      type: Number,
+      type: String,
     },
     billing_startdate: {
       type: Date,
