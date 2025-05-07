@@ -13,6 +13,7 @@ export const createBilling = async (req, res) => {
       profit_sharing,
       ispaymentreceived,
       received_date,
+      contact
     } = req.body;
 
     if (
@@ -44,6 +45,7 @@ export const createBilling = async (req, res) => {
       profit_sharing,
       ispaymentreceived,
       received_date,
+      contact
     });
 
     res.status(201).json({ bill });
@@ -117,6 +119,7 @@ export const updateCurrentUserBilling = async (req, res) => {
       profit_sharing,
       ispaymentreceived,
       received_date,
+      contact
       // email is not extracted to prevent update
     } = req.body;
 
@@ -130,6 +133,7 @@ export const updateCurrentUserBilling = async (req, res) => {
       profit_sharing,
       ispaymentreceived,
       received_date,
+      contact
     };
 
     // Perform the update
