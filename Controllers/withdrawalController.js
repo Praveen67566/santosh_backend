@@ -51,3 +51,19 @@ export const getallwithdrawal = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+export const deletewithdrawal = async (req,res)=>{
+  try{
+     const {id} = req.params;
+
+    const withdrawal = await Withdrawal.deleteOne({_id:id});
+
+    if(!withdrawal){
+      res.status(400).json({message:"withdrawal deletion not done yet"})
+    }
+
+    res.status(200).json({message:"Deleted Successfully"});
+  }catch(error){
+    res.status(500).json({message:"Internal Server Error"});
+  }
+}
