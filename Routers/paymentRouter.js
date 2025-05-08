@@ -6,7 +6,7 @@ import {
   makepayment,
   makepaymentsformembership,
   rejectPayment,
-  getAllPaymentsFormembership
+  getAllPaymentsFormembership,
 } from "../Controllers/paymentController.js";
 
 export const paymentRouter = express.Router();
@@ -18,7 +18,7 @@ paymentRouter.post(
 );
 
 paymentRouter.patch("/approve/:id", approvePayment);
-paymentRouter.patch("/reject/:id", rejectPayment);
+paymentRouter.delete("/reject/:id", rejectPayment);
 paymentRouter.post("/payment", upload.single("paymentScreenShot"), makepayment);
 paymentRouter.get("/payment", getAllPayments);
-paymentRouter.get("/paymentformembership",getAllPaymentsFormembership);
+paymentRouter.get("/paymentformembership", getAllPaymentsFormembership);
