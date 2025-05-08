@@ -56,6 +56,17 @@ export const deletewithdrawal = async (req,res)=>{
   try{
      const {id} = req.params;
 
+    const withdrawalobj = await Withdrawal.findOne({_id:id});
+    console.log(withdrawalobj);
+    const userid = withdrawalobj.userid;
+    const amount = withdrawalobj.amount;
+
+    const user = await User.findOne({_id:userid});
+
+    user.wallet -= amount;
+
+    user.save();
+
     const withdrawal = await Withdrawal.deleteOne({_id:id});
 
     if(!withdrawal){
