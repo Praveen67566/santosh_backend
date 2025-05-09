@@ -16,7 +16,7 @@ const billingSchema = new mongoose.Schema(
     contact:{
       type:String,
     },
-    username: {
+    name: {
       type: String,
     },
     cent_Account: {

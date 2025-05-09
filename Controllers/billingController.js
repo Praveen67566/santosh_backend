@@ -5,7 +5,7 @@ export const createBilling = async (req, res) => {
   try {
     const {
       email,
-      username,
+      name,
       cent_Account,
       billing_startdate,
       billing_enddate,
@@ -37,7 +37,7 @@ export const createBilling = async (req, res) => {
     const bill = await Billing.create({
       userid: user._id,
       email,
-      username,
+      name,
       cent_Account,
       billing_startdate,
       billing_enddate,
@@ -111,7 +111,7 @@ export const updateCurrentUserBilling = async (req, res) => {
 
     // Destructure allowed fields
     const {
-      username,
+      name,
       cent_Account,
       billing_startdate,
       billing_enddate,
@@ -125,7 +125,7 @@ export const updateCurrentUserBilling = async (req, res) => {
 
     // Prepare update object
     const updateData = {
-      username,
+      name,
       cent_Account,
       billing_startdate,
       billing_enddate,
