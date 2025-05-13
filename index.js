@@ -40,7 +40,7 @@ app.use("/api", paymentRouter);
 app.use("/api", withdrawalRouter);
 app.use("/api", walletRouter);
 app.use("/api", referralRouter);
-app.use('/api',brokerRouter);
+app.use("/api", brokerRouter);
 
 const PORT = process.env.PORT;
 
